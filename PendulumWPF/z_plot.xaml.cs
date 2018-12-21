@@ -25,14 +25,14 @@ namespace PendulumWPF
         public z_plot()
         {
             InitializeComponent();
-            var solution = WilberforcePendulum.GetOscillations(0, 0.1, 40);
+            //var solution = WilberforcePendulum.GetOscillations(0, 0.1, 40);
             SeriesCollection = new SeriesCollection
             {
                 new LineSeries
                 {
                     Title = "z/m",
                     
-                    Values = new ChartValues<double>(solution.z),
+                   // Values = new ChartValues<double>(solution.z),
                     PointGeometry = null
                 }
             };

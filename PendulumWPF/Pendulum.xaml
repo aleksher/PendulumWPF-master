@@ -31,7 +31,7 @@
             </Grid.ColumnDefinitions>
             <h:HelixViewport3D Grid.Column="0">
                 <h:DefaultLights/>
-                <ModelVisual3D x:Name="our_Model"/>
+                <ModelVisual3D x:Name="scene"/>
                 </h:HelixViewport3D>
 
             <StackPanel Grid.Column="1" MinWidth="250" ScrollViewer.CanContentScroll="True">
@@ -96,7 +96,7 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Button Content="Start" Margin="0,0,5,0" Grid.Column="0"/>
+                        <Button Content="Start" Margin="0,0,5,0" Grid.Column="0" Click="Start_OnClick"/>
                         <Button Content="Stop" Margin="0,0,5,0" Grid.Column="1"/>
                     </Grid>
                 </StackPanel>

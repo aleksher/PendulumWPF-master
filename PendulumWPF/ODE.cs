@@ -11,7 +11,8 @@ namespace ODE
         public double[] t;
         public double[] z;
         public double[] theta;
-        public Solution(double[,] sol)
+        public double[] x0;
+        public Solution(double[,] sol, double[] dxdt)
         {
             //sol[i,0] - t, sol[i, 1] - z, sol[i, 3] - theta
             t = new double[sol.GetLength(0)];
@@ -23,6 +24,8 @@ namespace ODE
                 z[i] = sol[i, 1];
                 theta[i] = sol[i, 3];
             }
+
+            x0 = dxdt;
         }
     }
 
@@ -30,18 +33,15 @@ namespace ODE
     {
         private static OdeExplicitRungeKutta45 odeRK = new OdeExplicitRungeKutta45();
         // TODO: m, k...
-        public static Solution GetOscillations(double start_t, double delta_t, double end_t)
+        public static Solution GetOscillations(double start_t, double delta_t, double end_t, double[] x0_)
         {
             OdeFunction fun = new OdeFunction(ODEs);
-            double[] x0 = new double[4];
+            double[] x0 = x0_;
             //x(i) = z, zdot, theta, thetadot
-            x0[0] = 0;
-            x0[1] = 0;
-            x0[2] = 2 * Math.PI;
-            x0[3] = 0;
+
             odeRK.InitializeODEs(fun, 4);
             double[,] sol = odeRK.Solve(x0, start_t, delta_t, end_t);
-            return new Solution(sol);
+            return new Solution(sol, dxdt);
         }
 
         private static double[] dxdt = new double[4];

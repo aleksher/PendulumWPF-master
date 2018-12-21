@@ -25,14 +25,14 @@ namespace PendulumWPF
         public theta_plot()
         {
             InitializeComponent();
-            var solution = WilberforcePendulum.GetOscillations(0, 0.1, 40);
+            //var solution = WilberforcePendulum.GetOscillations(0, 0.1, 40);
             SeriesCollection = new SeriesCollection
             {
                 new LineSeries
                 {
                     Title = "theta/rad",
 
-                    Values = new ChartValues<double>(solution.theta),
+                    //Values = new ChartValues<double>(solution.theta),
                     PointGeometry = null
                 }
             };

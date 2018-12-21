@@ -5,6 +5,7 @@ using HelixToolkit.Wpf;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using  ODE;
@@ -17,20 +18,46 @@ namespace PendulumWPF
         {
             InitializeComponent();
             ObjReader objReader = new ObjReader();
-            //Model3DGroup pendulumObject = objReader.Read("pendulum.obj");
-            //scene.Content = pendulumObject;
             Create3DViewPort();
 
         }
 
+        Model3D pendulum;
+        Model3D tripod;
+        Model3D table;
+        Model3DGroup system;
         private void Create3DViewPort()
         {
-            ObjReader pen = new ObjReader();
-            Model3DGroup pendulum = pen.Read("pendulum90 (3).obj");
-            scene.Content = pendulum;
-            scene.Transform = new ScaleTransform3D(2,2,2);
-            //RotateTransform3D rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 90));
-            //scene.Transform = rotate;
+            system = new Model3DGroup();
+
+            ModelImporter pendulumImporter = new ModelImporter();
+            pendulumImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkMagenta));
+            pendulum = pendulumImporter.Load("pendulum90ver2.obj");
+            Transform3DGroup pendTransform = new Transform3DGroup();
+            pendTransform.Children.Add(new ScaleTransform3D(1.5,1.5,1.5));
+            pendTransform.Children.Add(new TranslateTransform3D(0, 5 ,-3));
+            pendulum.Transform = pendTransform;
+            system.Children.Add(pendulum);
+
+            ModelImporter tripodImporter = new ModelImporter();
+            tripodImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
+            tripod = tripodImporter.Load("tripod.obj");
+            Transform3DGroup tripodTransform = new Transform3DGroup();
+            tripodTransform.Children.Add(new ScaleTransform3D(0.25, 0.25, 0.25));
+            tripodTransform.Children.Add(new TranslateTransform3D(0, 0, -10));
+            tripod.Transform = tripodTransform;
+            system.Children.Add(tripod);
+
+            ModelImporter tableImporter = new ModelImporter();
+            tableImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.BurlyWood));
+            table = tableImporter.Load("table.obj");
+            Transform3DGroup tableTransform = new Transform3DGroup();
+            tableTransform.Children.Add(new ScaleTransform3D(0.03, 0.03, 0.03));
+            tableTransform.Children.Add(new TranslateTransform3D(15, -15, 15));
+            table.Transform = tableTransform;
+            system.Children.Add(table);
+
+            scene.Content = system;
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -65,16 +92,14 @@ namespace PendulumWPF
          
             startT += deltaT;
             endT += deltaT;
-            rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
-            translate = new TranslateTransform3D(0,0,20*solve[0, 1]);
             transform = new Transform3DGroup();
+            rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
             transform.Children.Add(rotate);
-            transform.Children.Add(translate);
-            transform.Children.Add(new ScaleTransform3D(2, 2, 2));
-            scene.Transform = transform;
+            transform.Children.Add(new TranslateTransform3D(0, 3, -3 + 20 * solve[0, 1]));
+            transform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+            pendulum.Transform = transform;
             Console.WriteLine(solve[0, 1]);
         }
-
     }
 }
     

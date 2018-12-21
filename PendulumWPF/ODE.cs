@@ -6,29 +6,6 @@ using DotNumerics.ODE;
 
 namespace ODE
 {
-    //public class Solution
-    //{
-    //    public double[] t;
-    //    public double[] z;
-    //    public double[] theta;
-    //    public double[] x0;
-    //    public Solution(double[,] sol, double[] dxdt)
-    //    {
-    //        //sol[i,0] - t, sol[i, 1] - z, sol[i, 3] - theta
-    //        t = new double[sol.GetLength(0)];
-    //        z = new double[sol.GetLength(0)];
-    //        theta = new double[sol.GetLength(0)];
-    //        for (int i = 0; i < sol.GetLength(0); i++)
-    //        {
-    //            t[i] = sol[i, 0];
-    //            z[i] = sol[i, 1];
-    //            theta[i] = sol[i, 3];
-    //        }
-
-    //        x0 = dxdt;
-    //    }
-    //}
-
     public static class WilberforcePendulum
     {
         private static OdeExplicitRungeKutta45 odeRK = new OdeExplicitRungeKutta45();

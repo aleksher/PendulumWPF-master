@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using  ODE;
+using ODE;
+
 
 namespace PendulumWPF
 {
@@ -74,6 +75,9 @@ namespace PendulumWPF
             timer.Tick += timerTick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
+
+            var graph = new OXYPlotTest();
+            graph.Show();
         }
 
         private double startT = 0;
@@ -82,8 +86,7 @@ namespace PendulumWPF
         private double[] y0 = new double[] {0, 0, Math.PI * 2, 0 };
         private Transform3DGroup transform;
         private RotateTransform3D rotate;
-        private TranslateTransform3D translate;
-        private double i = 0;
+
         private void timerTick(object sender, EventArgs e)
         {
             //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
@@ -92,13 +95,13 @@ namespace PendulumWPF
          
             startT += deltaT;
             endT += deltaT;
+
             transform = new Transform3DGroup();
             rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
             transform.Children.Add(rotate);
             transform.Children.Add(new TranslateTransform3D(0, 3, -3 + 20 * solve[0, 1]));
             transform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
             pendulum.Transform = transform;
-            Console.WriteLine(solve[0, 1]);
         }
     }
 }

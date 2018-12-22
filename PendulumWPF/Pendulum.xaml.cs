@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using HelixToolkit;
 using HelixToolkit.Wpf;
@@ -9,10 +10,21 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using ODE;
+using OxyPlot;
 
 
 namespace PendulumWPF
 {
+    public class MainViewModel
+    {
+        public MainViewModel()
+        {
+            Title = "Example 2";
+        }
+
+        public string Title { get; private set; }
+        public IList<DataPoint> Points { get; private set; }
+    }
     public partial class Pendulum : Window
     {
         public Pendulum()
@@ -26,6 +38,8 @@ namespace PendulumWPF
         Model3D pendulum;
         Model3D tripod;
         Model3D table;
+        Model3D spring;
+
         Model3DGroup system;
         private void Create3DViewPort()
         {
@@ -58,6 +72,18 @@ namespace PendulumWPF
             table.Transform = tableTransform;
             system.Children.Add(table);
 
+            ModelImporter springImporter = new ModelImporter();
+            spring = springImporter.Load("spring.obj");
+            Transform3DGroup springTransform = new Transform3DGroup();
+
+            springTransform.Children.Add(new TranslateTransform3D(0, 5, 0));
+            spring.Transform = springTransform;
+
+            var mid = (tripod.Bounds.Z - pendulum.Bounds.Z + pendulum.Bounds.SizeZ) / 2;
+            spring.Transform = new TranslateTransform3D(0, 5, -mid);
+
+            system.Children.Add(spring);
+
             scene.Content = system;
         }
 
@@ -76,8 +102,8 @@ namespace PendulumWPF
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
 
-            var graph = new OXYPlotTest();
-            graph.Show();
+            //var graph = new OXYPlotTest();
+            //graph.Show();
         }
 
         private double startT = 0;
@@ -102,6 +128,9 @@ namespace PendulumWPF
             transform.Children.Add(new TranslateTransform3D(0, 3, -3 + 20 * solve[0, 1]));
             transform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
             pendulum.Transform = transform;
+            var mid = (tripod.Bounds.Z - (pendulum.Bounds.Z - pendulum.Bounds.SizeZ)) / 2;
+            spring.Transform = new TranslateTransform3D(0, 5, -mid);
+            Console.WriteLine(-mid * 2);
         }
     }
 }

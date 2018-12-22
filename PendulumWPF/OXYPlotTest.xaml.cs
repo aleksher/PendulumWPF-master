@@ -27,15 +27,4 @@ namespace PendulumWPF
             InitializeComponent();
         }
     }
-
-    public class MainViewModel
-    {
-        public MainViewModel()
-        {
-            Title = "Example 2";
-        }
-
-        public string Title { get; private set; }
-        public IList<DataPoint> Points { get; private set; }
-    }
 }

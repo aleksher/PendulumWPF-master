@@ -36,9 +36,14 @@ namespace PendulumWPF
         }
 
         Model3D pendulum;
-        Model3D tripod;
+        Model3D @base;
+        Model3D stick90;
+        Model3D stick;
         Model3D table;
         Model3D spring;
+
+        private Transform3DGroup pendulumTransform;
+        private Transform3DGroup springTransform;
 
         Model3DGroup system;
         private void Create3DViewPort()
@@ -54,14 +59,32 @@ namespace PendulumWPF
             pendulum.Transform = pendTransform;
             system.Children.Add(pendulum);
 
-            ModelImporter tripodImporter = new ModelImporter();
-            tripodImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
-            tripod = tripodImporter.Load("tripod.obj");
-            Transform3DGroup tripodTransform = new Transform3DGroup();
-            tripodTransform.Children.Add(new ScaleTransform3D(0.25, 0.25, 0.25));
-            tripodTransform.Children.Add(new TranslateTransform3D(0, 0, -10));
-            tripod.Transform = tripodTransform;
-            system.Children.Add(tripod);
+            ModelImporter baseImporter = new ModelImporter();
+            baseImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
+            @base = baseImporter.Load("tripod1d.obj");
+            Transform3DGroup baseTransform = new Transform3DGroup();
+            baseTransform.Children.Add(new ScaleTransform3D(0.25, 0.4, 0.25));
+            baseTransform.Children.Add(new TranslateTransform3D(0, 0, -10));
+            @base.Transform = baseTransform;
+            system.Children.Add(@base);
+
+            ModelImporter stick90Importer = new ModelImporter();
+            stick90Importer.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
+            stick90 = stick90Importer.Load("tripod2d.obj");
+            Transform3DGroup stick90Transform = new Transform3DGroup();
+            stick90Transform.Children.Add(new ScaleTransform3D(0.25, 0.25, 0.25));
+            stick90Transform.Children.Add(new TranslateTransform3D(0, -15, 5));
+            stick90.Transform = stick90Transform;
+            system.Children.Add(stick90);
+
+            ModelImporter stickImporter = new ModelImporter();
+            stickImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
+            stick = stickImporter.Load("tripod3d.obj");
+            Transform3DGroup stickTransform = new Transform3DGroup();
+            stickTransform.Children.Add(new ScaleTransform3D(0.25, 0.4, 0.25));
+            stickTransform.Children.Add(new TranslateTransform3D(0, -34, 12));
+            stick.Transform = stickTransform;
+            system.Children.Add(stick);
 
             ModelImporter tableImporter = new ModelImporter();
             tableImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.BurlyWood));
@@ -76,19 +99,21 @@ namespace PendulumWPF
             spring = springImporter.Load("spring.obj");
             Transform3DGroup springTransform = new Transform3DGroup();
 
-            var cut = ((pendulum.Bounds.Z - pendulum.Bounds.SizeZ) - tripod.Bounds.Z) + 0.5;
-            var springLength = tripod.Bounds.Z + tripod.Bounds.SizeZ - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
-            var scaleCoefficient = springLength / spring.Bounds.SizeZ;
+            var cut = stick.Bounds.Z + (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
+            //var springLength = @base.Bounds.Z + @base.Bounds.SizeZ - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            //var scaleCoefficient = springLength / spring.Bounds.SizeZ;
 
             springTransform = new Transform3DGroup();
-            springTransform.Children.Add(new TranslateTransform3D(0, 5, - 1 + cut / 2));
-            springTransform.Children.Add(new ScaleTransform3D(1, 1, springLength / 10));
+            springTransform.Children.Add(new TranslateTransform3D(0, 5, -11.4));
+            springTransform.Children.Add(new ScaleTransform3D(1, 1, -1));
 
             spring.Transform = springTransform;
 
             system.Children.Add(spring);
 
             scene.Content = system;
+
+            Console.WriteLine(cut);
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -114,9 +139,8 @@ namespace PendulumWPF
         private double deltaT = 0.01;
         private double endT = 0.02;
         private double[] y0 = new double[] {0, 0, Math.PI * 2, 0 };
-        private Transform3DGroup pendulumTransform;
+
         private RotateTransform3D rotate;
-        private Transform3DGroup springTransform;
 
         private void timerTick(object sender, EventArgs e)
         {
@@ -130,17 +154,17 @@ namespace PendulumWPF
             pendulumTransform = new Transform3DGroup();
             rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
             pendulumTransform.Children.Add(rotate);
-            pendulumTransform.Children.Add(new TranslateTransform3D(0, 3, -3 + 20 * solve[0, 1]));
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 3, -3 + 10 * solve[0, 1]));
             pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
             pendulum.Transform = pendulumTransform;
-            var cut = ((pendulum.Bounds.Z - pendulum.Bounds.SizeZ) - tripod.Bounds.Z) + 0.5;
-            var springLength = tripod.Bounds.Z + tripod.Bounds.SizeZ - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
-            var scaleCoefficient = springLength / spring.Bounds.SizeZ;
-            springTransform = new Transform3DGroup();
-            springTransform.Children.Add(new TranslateTransform3D(0, 5, cut / 2));
-            //springTransform.Children.Add(new ScaleTransform3D(1, 1, 1.3*scaleCoefficient));
-            spring.Transform = springTransform;
-            Console.WriteLine(scaleCoefficient);
+
+            var cut = stick.Bounds.Z + (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
+            var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
+            sprTransform = new Transform3DGroup();
+
+            //sprTransform.Children.Add(new ScaleTransform3D(1, 1, -10));
+            spring.Transform = sprTransform;
+            Console.WriteLine(cutLength);
         }
     }
 }

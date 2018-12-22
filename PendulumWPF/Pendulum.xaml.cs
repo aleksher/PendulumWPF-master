@@ -76,11 +76,15 @@ namespace PendulumWPF
             spring = springImporter.Load("spring.obj");
             Transform3DGroup springTransform = new Transform3DGroup();
 
-            springTransform.Children.Add(new TranslateTransform3D(0, 5, 0));
-            spring.Transform = springTransform;
+            var cut = ((pendulum.Bounds.Z - pendulum.Bounds.SizeZ) - tripod.Bounds.Z) + 0.5;
+            var springLength = tripod.Bounds.Z + tripod.Bounds.SizeZ - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            var scaleCoefficient = springLength / spring.Bounds.SizeZ;
 
-            var mid = (tripod.Bounds.Z - pendulum.Bounds.Z + pendulum.Bounds.SizeZ) / 2;
-            spring.Transform = new TranslateTransform3D(0, 5, -mid);
+            springTransform = new Transform3DGroup();
+            springTransform.Children.Add(new TranslateTransform3D(0, 5, - 1 + cut / 2));
+            springTransform.Children.Add(new ScaleTransform3D(1, 1, springLength / 10));
+
+            spring.Transform = springTransform;
 
             system.Children.Add(spring);
 
@@ -110,8 +114,9 @@ namespace PendulumWPF
         private double deltaT = 0.01;
         private double endT = 0.02;
         private double[] y0 = new double[] {0, 0, Math.PI * 2, 0 };
-        private Transform3DGroup transform;
+        private Transform3DGroup pendulumTransform;
         private RotateTransform3D rotate;
+        private Transform3DGroup springTransform;
 
         private void timerTick(object sender, EventArgs e)
         {
@@ -122,15 +127,20 @@ namespace PendulumWPF
             startT += deltaT;
             endT += deltaT;
 
-            transform = new Transform3DGroup();
+            pendulumTransform = new Transform3DGroup();
             rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
-            transform.Children.Add(rotate);
-            transform.Children.Add(new TranslateTransform3D(0, 3, -3 + 20 * solve[0, 1]));
-            transform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
-            pendulum.Transform = transform;
-            var mid = (tripod.Bounds.Z - (pendulum.Bounds.Z - pendulum.Bounds.SizeZ)) / 2;
-            spring.Transform = new TranslateTransform3D(0, 5, -mid);
-            Console.WriteLine(-mid * 2);
+            pendulumTransform.Children.Add(rotate);
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 3, -3 + 20 * solve[0, 1]));
+            pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+            pendulum.Transform = pendulumTransform;
+            var cut = ((pendulum.Bounds.Z - pendulum.Bounds.SizeZ) - tripod.Bounds.Z) + 0.5;
+            var springLength = tripod.Bounds.Z + tripod.Bounds.SizeZ - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            var scaleCoefficient = springLength / spring.Bounds.SizeZ;
+            springTransform = new Transform3DGroup();
+            springTransform.Children.Add(new TranslateTransform3D(0, 5, cut / 2));
+            //springTransform.Children.Add(new ScaleTransform3D(1, 1, 1.3*scaleCoefficient));
+            spring.Transform = springTransform;
+            Console.WriteLine(scaleCoefficient);
         }
     }
 }

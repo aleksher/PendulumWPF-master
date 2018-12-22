@@ -53,10 +53,10 @@ namespace PendulumWPF
             ModelImporter pendulumImporter = new ModelImporter();
             pendulumImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkMagenta));
             pendulum = pendulumImporter.Load("pendulum90ver2.obj");
-            Transform3DGroup pendTransform = new Transform3DGroup();
-            pendTransform.Children.Add(new ScaleTransform3D(1.5,1.5,1.5));
-            pendTransform.Children.Add(new TranslateTransform3D(0, 5 ,-3));
-            pendulum.Transform = pendTransform;
+            pendulumTransform = new Transform3DGroup();
+            pendulumTransform.Children.Add(new ScaleTransform3D(1.5,1.5,1.5));
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5 ,-3));
+            pendulum.Transform = pendulumTransform;
             system.Children.Add(pendulum);
 
             ModelImporter baseImporter = new ModelImporter();
@@ -97,23 +97,19 @@ namespace PendulumWPF
 
             ModelImporter springImporter = new ModelImporter();
             spring = springImporter.Load("spring.obj");
-            Transform3DGroup springTransform = new Transform3DGroup();
-
-            var cut = stick.Bounds.Z + (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
-            //var springLength = @base.Bounds.Z + @base.Bounds.SizeZ - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
-            //var scaleCoefficient = springLength / spring.Bounds.SizeZ;
 
             springTransform = new Transform3DGroup();
             springTransform.Children.Add(new TranslateTransform3D(0, 5, -11.4));
             springTransform.Children.Add(new ScaleTransform3D(1, 1, -1));
+            var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
+            var scale = cutLength / spring.Bounds.SizeZ - 1;
+            springTransform.Children.Add(new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z)));
 
             spring.Transform = springTransform;
 
             system.Children.Add(spring);
 
             scene.Content = system;
-
-            Console.WriteLine(cut);
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -141,9 +137,12 @@ namespace PendulumWPF
         private double[] y0 = new double[] {0, 0, Math.PI * 2, 0 };
 
         private RotateTransform3D rotate;
+        private ScaleTransform3D scaleTransform;
 
         private void timerTick(object sender, EventArgs e)
         {
+            pendulumTransform.Children.Clear();
+
             //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
             double[,] solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
             y0 = new[] {solve[1, 1], solve[1, 2], solve[1, 3], solve[1, 4]};
@@ -151,20 +150,28 @@ namespace PendulumWPF
             startT += deltaT;
             endT += deltaT;
 
-            pendulumTransform = new Transform3DGroup();
+
             rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
+            
+
             pendulumTransform.Children.Add(rotate);
-            pendulumTransform.Children.Add(new TranslateTransform3D(0, 3, -3 + 10 * solve[0, 1]));
+
             pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, - 3 + 30 * solve[0, 1]));
+            
+
+
             pendulum.Transform = pendulumTransform;
 
-            var cut = stick.Bounds.Z + (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
-            var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
-            sprTransform = new Transform3DGroup();
+            
+            var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            var scale = cutLength / spring.Bounds.SizeZ;
 
-            //sprTransform.Children.Add(new ScaleTransform3D(1, 1, -10));
-            spring.Transform = sprTransform;
-            Console.WriteLine(cutLength);
+            //springTransform.Children.Remove(scaleTransform);
+            scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z));
+            springTransform.Children.Add(scaleTransform);
+            //spring.Transform = springTransform;
+            Console.WriteLine(scale);
         }
     }
 }

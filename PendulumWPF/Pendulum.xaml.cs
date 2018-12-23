@@ -115,9 +115,9 @@ namespace PendulumWPF
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             // открывается из "Сохранить скриншот"
-            var window = new System.Windows.Window();
-            window.Content = new theta_plot();
-            window.Show();
+            //var window = new System.Windows.Window();
+            //window.Content = new theta_plot();
+            //window.Show();
         }
 
         private void Start_OnClick(object sender, RoutedEventArgs e)

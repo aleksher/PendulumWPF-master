@@ -101,8 +101,8 @@ namespace PendulumWPF
             springTransform = new Transform3DGroup();
             springTransform.Children.Add(new TranslateTransform3D(0, 5, -11.4));
             springTransform.Children.Add(new ScaleTransform3D(1, 1, -1));
-            var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z - pendulum.Bounds.SizeZ);
-            var scale = cutLength / spring.Bounds.SizeZ - 1;
+            var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            var scale = cutLength / spring.Bounds.SizeZ;
             springTransform.Children.Add(new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z)));
 
             spring.Transform = springTransform;

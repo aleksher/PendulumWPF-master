@@ -141,37 +141,26 @@ namespace PendulumWPF
 
         private void timerTick(object sender, EventArgs e)
         {
-            pendulumTransform.Children.Clear();
-
             //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
             double[,] solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
             y0 = new[] {solve[1, 1], solve[1, 2], solve[1, 3], solve[1, 4]};
          
             startT += deltaT;
             endT += deltaT;
-
-
-            rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
             
-
+            // преобразование маятника
+            rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
+            pendulumTransform.Children.Clear(); // очистим предыдущие изменения
             pendulumTransform.Children.Add(rotate);
-
             pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
             pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, - 3 + 30 * solve[0, 1]));
-            
-
-
             pendulum.Transform = pendulumTransform;
 
-            
+            // преобразование пружины
             var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
             var scale = cutLength / spring.Bounds.SizeZ;
-
-            //springTransform.Children.Remove(scaleTransform);
             scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z));
             springTransform.Children.Add(scaleTransform);
-            //spring.Transform = springTransform;
-            Console.WriteLine(scale);
         }
     }
 }

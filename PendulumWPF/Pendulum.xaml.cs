@@ -139,11 +139,16 @@ namespace PendulumWPF
         private RotateTransform3D rotate;
         private ScaleTransform3D scaleTransform;
 
+        private double[,] solve;
+        private double cutLength;
+        private double scale;
+
         private void timerTick(object sender, EventArgs e)
         {
             //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
-            double[,] solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
-            y0 = new[] {solve[1, 1], solve[1, 2], solve[1, 3], solve[1, 4]};
+            solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
+            y0[0] = solve[1, 1]; y0[1] = solve[1, 2];
+            y0[2] = solve[1, 3]; y0[3] = solve[1, 4];
          
             startT += deltaT;
             endT += deltaT;
@@ -157,8 +162,8 @@ namespace PendulumWPF
             pendulum.Transform = pendulumTransform;
 
             // преобразование пружины
-            var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
-            var scale = cutLength / spring.Bounds.SizeZ;
+            cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            scale = cutLength / spring.Bounds.SizeZ;
             scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z));
             springTransform.Children.Add(scaleTransform);
         }

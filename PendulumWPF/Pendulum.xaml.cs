@@ -130,8 +130,6 @@ public static class GraphData
             
         }
 
-        OXYPlotTest graph = new OXYPlotTest();
-
         private void Start_OnClick(object sender, RoutedEventArgs e)
         {
             DispatcherTimer timer = new DispatcherTimer();
@@ -168,19 +166,7 @@ public static class GraphData
             startT += deltaT;
             endT += deltaT;
 
-            // формирование списка данных для графиков
-            GraphData.z_t.Points.Add(new DataPoint(solve[0,0], solve[0,1]));
-            MainViewModel.MyModel.Series.Clear();
-            MainViewModel.MyModel.Series.Add(GraphData.z_t);
-            MainViewModel.MyModel.InvalidatePlot(true);
-            //GraphData.theta_t.Add(new DataPoint(solve[0,0], solve[0,3]));
-            //GraphData.theta_z.Add(new DataPoint(solve[0, 1], solve[0, 3]));
-            //if (GraphData.theta_z.Count > 1000)
-            //{
-            //    GraphData.z_t.RemoveAt(0);
-            //    GraphData.theta_t.RemoveAt(0);
-            //    GraphData.theta_z.RemoveAt(0);
-            //}
+
 
             // преобразование маятника
             rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
@@ -195,7 +181,20 @@ public static class GraphData
             scale = cutLength / spring.Bounds.SizeZ;
             scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z));
             springTransform.Children.Add(scaleTransform);
-            
+
+            // формирование списка данных для графиков
+            GraphData.z_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 1]));
+            MainViewModel.MyModel.Series.Clear();
+            MainViewModel.MyModel.Series.Add(GraphData.z_t);
+            MainViewModel.MyModel.InvalidatePlot(true);
+            //GraphData.theta_t.Add(new DataPoint(solve[0,0], solve[0,3]));
+            //GraphData.theta_z.Add(new DataPoint(solve[0, 1], solve[0, 3]));
+            //if (GraphData.theta_z.Count > 1000)
+            //{
+            //    GraphData.z_t.RemoveAt(0);
+            //    GraphData.theta_t.RemoveAt(0);
+            //    GraphData.theta_z.RemoveAt(0);
+            //}
         }
     }
 }

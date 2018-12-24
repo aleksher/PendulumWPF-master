@@ -20,6 +20,7 @@ namespace PendulumWPF
         public MainViewModel()
         {
             Title = "Example 2";
+            Points = GraphData.z_t;
         }
 
         public string Title { get; private set; }
@@ -123,10 +124,12 @@ namespace PendulumWPF
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             // открывается из "Сохранить скриншот"
-            //var window = new System.Windows.Window();
-            //window.Content = new theta_plot();
-            //window.Show();
+            var graph = new OXYPlotTest();
+            graph.Show();
+            
         }
+
+        OXYPlotTest graph = new OXYPlotTest();
 
         private void Start_OnClick(object sender, RoutedEventArgs e)
         {
@@ -134,9 +137,6 @@ namespace PendulumWPF
             timer.Tick += timerTick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
-
-            //var graph = new OXYPlotTest();
-            //graph.Show();
         }
 
         private double startT = 0;
@@ -153,6 +153,7 @@ namespace PendulumWPF
 
         private void timerTick(object sender, EventArgs e)
         {
+            //graph.Close();
             //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
             solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
             y0[0] = solve[1, 1]; y0[1] = solve[1, 2];
@@ -165,12 +166,12 @@ namespace PendulumWPF
             GraphData.z_t.Add(new DataPoint(solve[0,0], solve[0,1]));
             GraphData.theta_t.Add(new DataPoint(solve[0,0], solve[0,3]));
             GraphData.theta_z.Add(new DataPoint(solve[0, 1], solve[0, 3]));
-            if (GraphData.theta_z.Count > 4000)
-            {
-                GraphData.z_t.RemoveAt(0);
-                GraphData.theta_t.RemoveAt(0);
-                GraphData.theta_z.RemoveAt(0);
-            }
+            //if (GraphData.theta_z.Count > 1000)
+            //{
+            //    GraphData.z_t.RemoveAt(0);
+            //    GraphData.theta_t.RemoveAt(0);
+            //    GraphData.theta_z.RemoveAt(0);
+            //}
 
             // преобразование маятника
             rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
@@ -185,6 +186,7 @@ namespace PendulumWPF
             scale = cutLength / spring.Bounds.SizeZ;
             scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z));
             springTransform.Children.Add(scaleTransform);
+            
         }
     }
 }

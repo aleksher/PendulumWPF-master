@@ -11,6 +11,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using ODE;
 using OxyPlot;
+using OxyPlot.Series;
 
 
 namespace PendulumWPF
@@ -19,17 +20,17 @@ namespace PendulumWPF
     {
         public MainViewModel()
         {
-            Title = "Example 2";
-            Points = GraphData.z_t;
+            MyModel = new PlotModel { Title = "Example 1" };
         }
 
-        public string Title { get; private set; }
-        public IList<DataPoint> Points { get; private set; }
+        public static PlotModel MyModel { get; private set; }
     }
 
-    public static class GraphData
+
+public static class GraphData
     {
-        public static List<DataPoint> z_t = new List<DataPoint>();
+        public static LineSeries z_t =new LineSeries();
+        //public static List<DataPoint> z_t = new List<DataPoint>();
         public static List<DataPoint> theta_t = new List<DataPoint>();
         public static List<DataPoint> theta_z = new List<DataPoint>();
     }
@@ -137,6 +138,11 @@ namespace PendulumWPF
             timer.Tick += timerTick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
+
+            //MainViewModel.MyModel.Series.Clear();
+            //MainViewModel.MyModel.Series.Add(new );
+            //MainViewModel.MyModel.InvalidatePlot(true);
+
         }
 
         private double startT = 0;
@@ -163,9 +169,12 @@ namespace PendulumWPF
             endT += deltaT;
 
             // формирование списка данных для графиков
-            GraphData.z_t.Add(new DataPoint(solve[0,0], solve[0,1]));
-            GraphData.theta_t.Add(new DataPoint(solve[0,0], solve[0,3]));
-            GraphData.theta_z.Add(new DataPoint(solve[0, 1], solve[0, 3]));
+            GraphData.z_t.Points.Add(new DataPoint(solve[0,0], solve[0,1]));
+            MainViewModel.MyModel.Series.Clear();
+            MainViewModel.MyModel.Series.Add(GraphData.z_t);
+            MainViewModel.MyModel.InvalidatePlot(true);
+            //GraphData.theta_t.Add(new DataPoint(solve[0,0], solve[0,3]));
+            //GraphData.theta_z.Add(new DataPoint(solve[0, 1], solve[0, 3]));
             //if (GraphData.theta_z.Count > 1000)
             //{
             //    GraphData.z_t.RemoveAt(0);

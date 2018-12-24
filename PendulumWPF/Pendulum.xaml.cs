@@ -25,6 +25,14 @@ namespace PendulumWPF
         public string Title { get; private set; }
         public IList<DataPoint> Points { get; private set; }
     }
+
+    public static class GraphData
+    {
+        public static List<DataPoint> z_t = new List<DataPoint>();
+        public static List<DataPoint> theta_t = new List<DataPoint>();
+        public static List<DataPoint> theta_z = new List<DataPoint>();
+    }
+
     public partial class Pendulum : Window
     {
         public Pendulum()
@@ -152,7 +160,18 @@ namespace PendulumWPF
          
             startT += deltaT;
             endT += deltaT;
-            
+
+            // формирование списка данных для графиков
+            GraphData.z_t.Add(new DataPoint(solve[0,0], solve[0,1]));
+            GraphData.theta_t.Add(new DataPoint(solve[0,0], solve[0,3]));
+            GraphData.theta_z.Add(new DataPoint(solve[0, 1], solve[0, 3]));
+            if (GraphData.theta_z.Count > 4000)
+            {
+                GraphData.z_t.RemoveAt(0);
+                GraphData.theta_t.RemoveAt(0);
+                GraphData.theta_z.RemoveAt(0);
+            }
+
             // преобразование маятника
             rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
             pendulumTransform.Children.Clear(); // очистим предыдущие изменения

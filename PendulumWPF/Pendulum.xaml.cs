@@ -5,6 +5,7 @@ using HelixToolkit;
 using HelixToolkit.Wpf;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -20,7 +21,8 @@ namespace PendulumWPF
     {
         public MainViewModel()
         {
-            MyModel = new PlotModel { Title = "Example 1" };
+            MyModel = new PlotModel { Title = "z(t)" };
+            MyModel.Series.Add(GraphData.z_t);
         }
 
         public static PlotModel MyModel { get; private set; }
@@ -30,9 +32,8 @@ namespace PendulumWPF
 public static class GraphData
     {
         public static LineSeries z_t =new LineSeries();
-        //public static List<DataPoint> z_t = new List<DataPoint>();
-        public static List<DataPoint> theta_t = new List<DataPoint>();
-        public static List<DataPoint> theta_z = new List<DataPoint>();
+        public static LineSeries theta_t = new LineSeries();
+        public static LineSeries theta_z = new LineSeries();
     }
 
     public partial class Pendulum : Window
@@ -62,7 +63,7 @@ public static class GraphData
 
             ModelImporter pendulumImporter = new ModelImporter();
             pendulumImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkMagenta));
-            pendulum = pendulumImporter.Load("pendulum90ver2.obj");
+            pendulum = pendulumImporter.Load("pendulum90ver5 (2).obj");
             pendulumTransform = new Transform3DGroup();
             pendulumTransform.Children.Add(new ScaleTransform3D(1.5,1.5,1.5));
             pendulumTransform.Children.Add(new TranslateTransform3D(0, 5 ,-3));
@@ -113,7 +114,7 @@ public static class GraphData
             springTransform.Children.Add(new ScaleTransform3D(1, 1, -1));
             var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
             var scale = cutLength / spring.Bounds.SizeZ;
-            springTransform.Children.Add(new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z)));
+            springTransform.Children.Add(new ScaleTransform3D(new Vector3D(1, 1, scale*1.03), new Point3D(0, 5, stick.Bounds.Z)));
 
             spring.Transform = springTransform;
 
@@ -127,7 +128,12 @@ public static class GraphData
             // открывается из "Сохранить скриншот"
             var graph = new OXYPlotTest();
             graph.Show();
-            
+
+            DispatcherTimer timerGraph = new DispatcherTimer();
+            timerGraph.Tick += timerGraphTick;
+            timerGraph.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            timerGraph.Start();
+
         }
 
         private void Start_OnClick(object sender, RoutedEventArgs e)
@@ -136,17 +142,19 @@ public static class GraphData
             timer.Tick += timerTick;
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             timer.Start();
+        }
 
-            //MainViewModel.MyModel.Series.Clear();
-            //MainViewModel.MyModel.Series.Add(new );
-            //MainViewModel.MyModel.InvalidatePlot(true);
-
+        private void timerGraphTick(object sender, EventArgs e)
+        {
+            //if (GraphData.z_t.Points.Count > 1000)
+            //    GraphData.z_t.Points.RemoveAt(0);
+            MainViewModel.MyModel.InvalidatePlot(true);
         }
 
         private double startT = 0;
         private double deltaT = 0.01;
         private double endT = 0.02;
-        private double[] y0 = new double[] {0, 0, Math.PI * 2, 0 };
+        private double[] y0 = {0, 0, Math.PI * 2, 0 };
 
         private RotateTransform3D rotate;
         private ScaleTransform3D scaleTransform;
@@ -157,7 +165,6 @@ public static class GraphData
 
         private void timerTick(object sender, EventArgs e)
         {
-            //graph.Close();
             //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
             solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
             y0[0] = solve[1, 1]; y0[1] = solve[1, 2];
@@ -179,16 +186,13 @@ public static class GraphData
             // преобразование пружины
             cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
             scale = cutLength / spring.Bounds.SizeZ;
-            scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale), new Point3D(0, 5, stick.Bounds.Z));
+            scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale*1.03), new Point3D(0, 5, stick.Bounds.Z));
             springTransform.Children.Add(scaleTransform);
 
             // формирование списка данных для графиков
             GraphData.z_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 1]));
-            MainViewModel.MyModel.Series.Clear();
-            MainViewModel.MyModel.Series.Add(GraphData.z_t);
-            MainViewModel.MyModel.InvalidatePlot(true);
-            //GraphData.theta_t.Add(new DataPoint(solve[0,0], solve[0,3]));
-            //GraphData.theta_z.Add(new DataPoint(solve[0, 1], solve[0, 3]));
+            GraphData.theta_t.Points.Add(new DataPoint(solve[0,0], solve[0,3]));
+            GraphData.theta_z.Points.Add(new DataPoint(solve[0, 1], solve[0, 3]));
             //if (GraphData.theta_z.Count > 1000)
             //{
             //    GraphData.z_t.RemoveAt(0);

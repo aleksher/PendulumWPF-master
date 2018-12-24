@@ -17,9 +17,9 @@ using OxyPlot.Series;
 
 namespace PendulumWPF
 {
-    public class MainViewModel
+    public class z_t
     {
-        public MainViewModel()
+        public z_t()
         {
             MyModel = new PlotModel { Title = "z(t)" };
             MyModel.Series.Add(GraphData.z_t);
@@ -131,7 +131,7 @@ public static class GraphData
 
             DispatcherTimer timerGraph = new DispatcherTimer();
             timerGraph.Tick += timerGraphTick;
-            timerGraph.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            timerGraph.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timerGraph.Start();
 
         }
@@ -144,11 +144,15 @@ public static class GraphData
             timer.Start();
         }
 
+        private bool graphFin = true;
         private void timerGraphTick(object sender, EventArgs e)
         {
-            //if (GraphData.z_t.Points.Count > 1000)
-            //    GraphData.z_t.Points.RemoveAt(0);
-            MainViewModel.MyModel.InvalidatePlot(true);
+            if (graphFin)
+            {
+                graphFin = false;
+                z_t.MyModel.InvalidatePlot(true);
+                graphFin = true;
+            }
         }
 
         private double startT = 0;
@@ -163,42 +167,60 @@ public static class GraphData
         private double cutLength;
         private double scale;
 
+        private int count = 0;
+        private bool pendFin = true;
+
         private void timerTick(object sender, EventArgs e)
         {
-            //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
-            solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
-            y0[0] = solve[1, 1]; y0[1] = solve[1, 2];
-            y0[2] = solve[1, 3]; y0[3] = solve[1, 4];
-         
-            startT += deltaT;
-            endT += deltaT;
+            if (pendFin)
+            {
+                pendFin = false;
+                //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
+                solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
+                y0[0] = solve[1, 1];
+                y0[1] = solve[1, 2];
+                y0[2] = solve[1, 3];
+                y0[3] = solve[1, 4];
+
+                startT += deltaT;
+                endT += deltaT;
 
 
 
-            // преобразование маятника
-            rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1), solve[0, 3] * 180 / Math.PI));
-            pendulumTransform.Children.Clear(); // очистим предыдущие изменения
-            pendulumTransform.Children.Add(rotate);
-            pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
-            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, - 3 + 30 * solve[0, 1]));
-            pendulum.Transform = pendulumTransform;
+                // преобразование маятника
+                rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1),
+                    solve[0, 3] * 180 / Math.PI));
+                pendulumTransform.Children.Clear(); // очистим предыдущие изменения
+                pendulumTransform.Children.Add(rotate);
+                pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+                pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + 30 * solve[0, 1]));
+                pendulum.Transform = pendulumTransform;
 
-            // преобразование пружины
-            cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
-            scale = cutLength / spring.Bounds.SizeZ;
-            scaleTransform = new ScaleTransform3D(new Vector3D(1, 1, scale*1.03), new Point3D(0, 5, stick.Bounds.Z));
-            springTransform.Children.Add(scaleTransform);
+                // преобразование пружины
+                cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+                scale = cutLength / spring.Bounds.SizeZ;
+                scaleTransform =
+                    new ScaleTransform3D(new Vector3D(1, 1, scale * 1.03), new Point3D(0, 5, stick.Bounds.Z));
+                springTransform.Children.Add(scaleTransform);
 
-            // формирование списка данных для графиков
-            GraphData.z_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 1]));
-            GraphData.theta_t.Points.Add(new DataPoint(solve[0,0], solve[0,3]));
-            GraphData.theta_z.Points.Add(new DataPoint(solve[0, 1], solve[0, 3]));
-            //if (GraphData.theta_z.Count > 1000)
-            //{
-            //    GraphData.z_t.RemoveAt(0);
-            //    GraphData.theta_t.RemoveAt(0);
-            //    GraphData.theta_z.RemoveAt(0);
-            //}
+                // формирование списка данных для графиков
+                if (count++ > 10)
+                {
+                    GraphData.z_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 1]));
+                    GraphData.theta_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 3]));
+                    GraphData.theta_z.Points.Add(new DataPoint(solve[0, 1], solve[0, 3]));
+                    count = 0;
+                }
+
+                if (GraphData.theta_z.Points.Count > 300)
+                {
+                    GraphData.z_t.Points.RemoveAt(0);
+                    GraphData.theta_t.Points.RemoveAt(0);
+                    GraphData.theta_z.Points.RemoveAt(0);
+                }
+
+                pendFin = true;
+            }
         }
     }
 }

@@ -70,8 +70,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="OXYPlotTest.xaml.cs">
-      <DependentUpon>OXYPlotTest.xaml</DependentUpon>
+    <Compile Include="z_t.xaml.cs">
+      <DependentUpon>z_t.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pendulum.xaml.cs">
       <DependentUpon>Pendulum.xaml</DependentUpon>
@@ -80,7 +80,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="OXYPlotTest.xaml">
+    <Page Include="z_t.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

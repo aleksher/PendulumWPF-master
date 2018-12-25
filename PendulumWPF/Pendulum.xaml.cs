@@ -235,7 +235,7 @@ namespace PendulumWPF
                 springTransform.Children.Add(scaleTransform);
 
                 // формирование списка данных для графиков
-                if (count++ > 2)
+                if (graph != null && count++ > 2)
                 {
                     GraphData.z_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 1]));
                     GraphData.theta_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 3]));

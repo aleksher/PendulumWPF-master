@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
@@ -176,6 +177,9 @@ namespace PendulumWPF
                 timerPendulum.Interval = new TimeSpan(0, 0, 0, 0, 30);
                 timerPendulum.Start();
             }
+
+            var a = (Button) sender;
+            a.IsEnabled = false;
         }
 
         private bool graphFin = true;
@@ -189,7 +193,7 @@ namespace PendulumWPF
             }
         }
 
-        private double startT = 0;
+        private double startT = 0; 
         private double deltaT = 0.05;
         private double endT = 0.1;
         private double[] y0 = { 0, 0, 0, 0 };
@@ -221,6 +225,9 @@ namespace PendulumWPF
                 y0[3] = solve[1, 4];
 
                 startT += deltaT;
+                TimeSpan t = TimeSpan.FromSeconds(startT);
+                var timer_lbl = (TextBlock)this.FindName("timer_lbl");
+                timer_lbl.Text = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D2}ms", t.Hours, t.Minutes, t.Seconds, t.Milliseconds);
                 endT += deltaT;
 
                 // преобразование маятника
@@ -307,11 +314,26 @@ namespace PendulumWPF
         private void Pause_OnClick(object sender, RoutedEventArgs e)
         {
             paused = true;
+            var start_btn = (Button)this.FindName("start_btn");
+            start_btn.IsEnabled = true;
         }
 
         private void Stop_OnClick(object sender, RoutedEventArgs e)
         {
+            var slider1 = (Slider)this.FindName("Massa_gruza");
+            slider1.Value = 0.1;
 
+            var slider2 = (Slider)this.FindName("begin_z");
+            slider2.Value = 0;
+
+            var slider3 = (Slider)this.FindName("begin_fi");
+            slider3.Value = 0;
+
+            var slider4 = (Slider)this.FindName("stifnes_cof");
+            slider4.Value = 2;
+
+            var slider5 = (Slider)this.FindName("nut_mass");
+            slider5.Value = 0.01;
 
             timerPendulum.Stop();
 
@@ -339,6 +361,9 @@ namespace PendulumWPF
                 z_t.MyModel.Series.Clear();
 
             }
+
+            var start_btn = (Button) this.FindName("start_btn");
+            start_btn.IsEnabled = true;
 
         }
     }

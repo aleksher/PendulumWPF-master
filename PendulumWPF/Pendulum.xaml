@@ -23,122 +23,122 @@
 
 
         <Border Padding="0">
-        <Grid>
+            <Grid>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="250" />
-            </Grid.ColumnDefinitions>
-            <h:HelixViewport3D Grid.Column="0">
-                <h:DefaultLights/>
-                <ModelVisual3D x:Name="scene"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="250" />
+                </Grid.ColumnDefinitions>
+                <h:HelixViewport3D Grid.Column="0">
+                    <h:DefaultLights/>
+                    <ModelVisual3D x:Name="scene"/>
                 </h:HelixViewport3D>
 
-            <StackPanel Grid.Column="1" MinWidth="250" ScrollViewer.CanContentScroll="True" Background="LightSteelBlue">
-                <TextBlock Text="Исходные данные" FontWeight="Bold" Margin="10,5,0,10" />
-                <StackPanel Margin="20,0,20,20">
-                    <TextBlock Text="Масса груза [кг]" FontWeight="Bold" Margin="0, 0, 0, 5" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged" Maximum="1" Minimum="0.1" LargeChange="0.1" Name="Massa_gruza">
-                            
-                        </Slider>
-                        <TextBox Grid.Column="1" Text="{Binding ElementName=Massa_gruza, Path=Value}">
-                            
-                        </TextBox>
-                    </Grid>
-                    <TextBlock Text="Начальное смещение [см]" FontWeight="Bold" Margin="0, 10, 0, 5" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" MinWidth="250" ScrollViewer.CanContentScroll="True" Background="LightSteelBlue">
+                    <TextBlock Text="Исходные данные" FontWeight="Bold" Margin="10,5,0,10" />
+                    <StackPanel Margin="20,0,20,20">
+                        <TextBlock Text="Масса груза [кг]" FontWeight="Bold" Margin="0, 0, 0, 5" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged" Maximum="1" Minimum="0.1" LargeChange="0.1" Name="Massa_gruza">
+
+                            </Slider>
+                            <TextBox Grid.Column="1" Text="{Binding ElementName=Massa_gruza, Path=Value}">
+
+                            </TextBox>
+                        </Grid>
+                        <TextBlock Text="Начальное смещение [см]" FontWeight="Bold" Margin="0, 10, 0, 5" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
                             <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged_1" Maximum="10" Minimum="-10" LargeChange="0.1" Name="begin_z">
 
-                        </Slider>
-                        <TextBox Grid.Column="1" Text="{Binding ElementName=begin_z, Path=Value}">
+                            </Slider>
+                            <TextBox Grid.Column="1" Text="{Binding ElementName=begin_z, Path=Value}">
 
-                        </TextBox>
-                    </Grid>
-                    <TextBlock Text="Начальный угол смещения [°]" FontWeight="Bold" Margin="0, 10, 0, 5" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0" Maximum="180" Minimum="0" LargeChange="1"  ValueChanged="Slider_ValueChanged_2" Name="begin_fi" />
-                        <TextBox Grid.Column="1" Text="{Binding ElementName=begin_fi, Path=Value}">
-
-                        </TextBox>
-                    </Grid>
-                    <TextBlock Text="Коэффициент жесткости [кг/с]" FontWeight="Bold" Margin="0, 10, 0, 5"  />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0" Maximum="20" Minimum="2" LargeChange="0.1" ValueChanged="Slider_ValueChanged_4" Name="stifnes_cof"/>
-                        <TextBox Grid.Column="1" Text="{Binding ElementName=stifnes_cof, Path=Value}">
-
-                        </TextBox>
+                            </TextBox>
                         </Grid>
-                    <TextBlock Text="Масса гайки [кг]" FontWeight="Bold" Margin="0, 10, 0, 5" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0" Maximum="0.1" Minimum="0.01" ValueChanged="Slider_ValueChanged_3" Name="nut_mass"/>
-                        <TextBox Grid.Column="1" Text="{Binding ElementName=nut_mass, Path=Value}">
+                        <TextBlock Text="Начальный угол смещения [°]" FontWeight="Bold" Margin="0, 10, 0, 5" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Slider Grid.Column="0" Maximum="180" Minimum="0" LargeChange="1"  ValueChanged="Slider_ValueChanged_2" Name="begin_fi" />
+                            <TextBox Grid.Column="1" Text="{Binding ElementName=begin_fi, Path=Value}">
 
-                        </TextBox>
-                    </Grid>
+                            </TextBox>
+                        </Grid>
+                        <TextBlock Text="Коэффициент жесткости [кг/с]" FontWeight="Bold" Margin="0, 10, 0, 5"  />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Slider Grid.Column="0" Maximum="20" Minimum="2" LargeChange="0.1" ValueChanged="Slider_ValueChanged_4" Name="stifnes_cof"/>
+                            <TextBox Grid.Column="1" Text="{Binding ElementName=stifnes_cof, Path=Value}">
+
+                            </TextBox>
+                        </Grid>
+                        <TextBlock Text="Масса гайки [кг]" FontWeight="Bold" Margin="0, 10, 0, 5" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Slider Grid.Column="0" Maximum="0.1" Minimum="0.01" ValueChanged="Slider_ValueChanged_3" Name="nut_mass"/>
+                            <TextBox Grid.Column="1" Text="{Binding ElementName=nut_mass, Path=Value}">
+
+                            </TextBox>
+                        </Grid>
                     </StackPanel>
 
-                <TextBlock Text="Панель управления" FontWeight="Bold" Margin="10,5,0,10" />
-                <StackPanel Margin="20,0,20,20">
-                    <TextBlock Text="Время [с]" FontWeight="Bold" Margin="0, 5, 0, 5" />
-                    <TextBlock Text="00:00:05" FontFamily="Roboto" FontSize="36" FontWeight="Bold"/>
-                    <Grid Height="30" Margin="0, 20, 0, 0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Start" Margin="0,0,5,0" Grid.Column="0" Click="Start_OnClick"/>
-                        <Button Content="Pause" Margin="0,0,5,0" Grid.Column="1" Click="Pause_OnClick"/>
-                        <Button Content="Stop" Margin="0,0,5,0" Grid.Column="2" Click ="Stop_OnClick"/>
-                    </Grid>
+                    <TextBlock Text="Панель управления" FontWeight="Bold" Margin="10,5,0,10" />
+                    <StackPanel Margin="20,0,20,20">
+                        <TextBlock Text="Время [с]" FontWeight="Bold" Margin="0, 5, 0, 5" />
+                        <TextBlock Text="00:00:05" FontFamily="Roboto" FontWeight="Bold" Name="timer_lbl" FontSize="16"/>
+                        <Grid Height="30" Margin="0, 20, 0, 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Start" Margin="0,0,5,0" Grid.Column="0" Click="Start_OnClick" Height="30" VerticalAlignment="Bottom" Name="start_btn"/>
+                            <Button Content="Pause" Margin="0,0,5,0" Grid.Column="1" Click="Pause_OnClick"/>
+                            <Button Content="Stop" Grid.Column="2" Click ="Stop_OnClick" HorizontalAlignment="Left" Width="65"/>
+                        </Grid>
+                    </StackPanel>
+
+
+                    <StackPanel>
+                        <TextBlock Text="Маятник Уилберфорса" Margin="0,0,0,0" FontSize="14" FontWeight="Bold" TextAlignment="Center"/>
+                        <TextBlock Text="Разработчики:" Margin="10,5,0,0" FontSize="12" FontWeight="Bold"/>
+                        <TextBlock Text="Бурдуков Вадим ПМ-71" Margin="20,0,0,0" FontSize="12"/>
+                        <TextBlock Text="Коваленко Антон ПМ-71" Margin="20,0,0,0" FontSize="12"/>
+                        <TextBlock Text="Каськов Евгений ПМ-71" Margin="20,0,0,0" FontSize="12"/>
+                        <TextBlock Text="Щербаков Александр ПМИ-71" Margin="20,0,0,0" FontSize="12"/>
+                        <TextBlock Text="Руководитель:" Margin="10,5,0,0" FontSize="12" FontWeight="Bold"/>
+                        <TextBlock Text="Баранов Александр Викторович" Margin="20,0,0,0" FontSize="12"/>
+                        <TextBlock Text="baranovav@ngs.ru" Margin="20,0,0,0" FontSize="12" FontWeight="Bold" Height="16" Foreground="#FFEC0C0C" />
+                    </StackPanel>
+                    <Image Source="nstu_logo.png" Margin="0,20,0,0" Height="175"/>
+                    <TextBlock Text="Новосибирск" FontSize="14" FontWeight="Bold" TextAlignment="Center"/>
+                    <TextBlock Text="2018" FontSize="14" FontWeight="Bold" TextAlignment="Center"/>
+
+
+
                 </StackPanel>
 
 
-                <StackPanel>
-                    <TextBlock Text="Маятник Уилберфорса" Margin="0,0,0,0" FontSize="14" FontWeight="Bold" TextAlignment="Center"/>
-                    <TextBlock Text="Разработчики:" Margin="10,5,0,0" FontSize="12" FontWeight="Bold"/>
-                    <TextBlock Text="Бурдуков Вадим ПМ-71" Margin="20,0,0,0" FontSize="12"/>
-                    <TextBlock Text="Коваленко Антон ПМ-71" Margin="20,0,0,0" FontSize="12"/>
-                    <TextBlock Text="Каськов Евгений ПМ-71" Margin="20,0,0,0" FontSize="12"/>
-                    <TextBlock Text="Щербаков Александр ПМИ-71" Margin="20,0,0,0" FontSize="12"/>
-                    <TextBlock Text="Руководитель:" Margin="10,5,0,0" FontSize="12" FontWeight="Bold"/>
-                    <TextBlock Text="Баранов Александр Викторович" Margin="20,0,0,0" FontSize="12"/>
-                    <TextBlock Text="baranovav@ngs.ru" Margin="20,0,0,0" FontSize="12" FontWeight="Bold" Height="16" Foreground="#FFEC0C0C" />
-                </StackPanel>
-                <Image Source="nstu_logo.png" Margin="0,20,0,0" Height="175"/>
-                <TextBlock Text="Новосибирск" FontSize="14" FontWeight="Bold" TextAlignment="Center"/>
-                <TextBlock Text="2018" FontSize="14" FontWeight="Bold" TextAlignment="Center"/>
+            </Grid>
+        </Border>
 
-
-
-            </StackPanel>
-
-
-        </Grid>
-    </Border>
-
-        </DockPanel>
+    </DockPanel>
 
 
 </Window>

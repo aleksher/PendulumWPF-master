@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:PendulumWPF"
-        Title="Example 1 (WPF)" Height="350" Width="525">
+        Title="Графики z(t) и theta(t)" Height="350" Width="525">
     <Window.DataContext>
         <local:z_t/>
     </Window.DataContext>

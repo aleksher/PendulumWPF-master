@@ -28,7 +28,7 @@ namespace PendulumWPF
             z_axis.Title = "z /m";
             z_axis.Key = "z";
             GraphData.z_t.YAxisKey = "z";
-            GraphData.z_t.Color = OxyColor.FromRgb(0,0,255);
+            GraphData.z_t.Color = OxyColor.FromRgb(0, 0, 255);
             MyModel.Axes.Add(z_axis);
             MyModel.Series.Add(GraphData.z_t);
 
@@ -38,7 +38,7 @@ namespace PendulumWPF
             theta_axis.Key = "theta";
             theta_axis.Position = AxisPosition.Right;
             GraphData.theta_t.YAxisKey = "theta";
-            GraphData.theta_t.Color = OxyColor.FromRgb(255,0,0);
+            GraphData.theta_t.Color = OxyColor.FromRgb(255, 0, 0);
 
             MyModel.Axes.Add(theta_axis);
             MyModel.Series.Add(GraphData.theta_t);
@@ -54,9 +54,9 @@ namespace PendulumWPF
     }
 
 
-public static class GraphData
+    public static class GraphData
     {
-        public static LineSeries z_t =new LineSeries();
+        public static LineSeries z_t = new LineSeries();
         public static LineSeries theta_t = new LineSeries();
         public static LineSeries theta_z = new LineSeries();
     }
@@ -90,8 +90,8 @@ public static class GraphData
             pendulumImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkGoldenrod));
             pendulum = pendulumImporter.Load("pendulum.obj");
             pendulumTransform = new Transform3DGroup();
-            pendulumTransform.Children.Add(new ScaleTransform3D(1.5,1.5,1.5));
-            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5 ,-3));
+            pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3));
             pendulum.Transform = pendulumTransform;
             system.Children.Add(pendulum);
 
@@ -140,7 +140,7 @@ public static class GraphData
             springTransform.Children.Add(new ScaleTransform3D(1, 1, -1));
             var cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
             var scale = cutLength / spring.Bounds.SizeZ;
-            springTransform.Children.Add(new ScaleTransform3D(new Vector3D(1, 1, scale*1.03), new Point3D(0, 5, stick.Bounds.Z)));
+            springTransform.Children.Add(new ScaleTransform3D(new Vector3D(1, 1, scale * 1.03), new Point3D(0, 5, stick.Bounds.Z)));
 
             spring.Transform = springTransform;
 
@@ -167,10 +167,15 @@ public static class GraphData
         private DispatcherTimer timerPendulum;
         private void Start_OnClick(object sender, RoutedEventArgs e)
         {
-            timerPendulum = new DispatcherTimer();
-            timerPendulum.Tick += timerTick;
-            timerPendulum.Interval = new TimeSpan(0, 0, 0, 0, 30);
-            timerPendulum.Start();
+            if (paused)
+                paused = false;
+            else
+            {
+                timerPendulum = new DispatcherTimer();
+                timerPendulum.Tick += timerTick;
+                timerPendulum.Interval = new TimeSpan(0, 0, 0, 0, 30);
+                timerPendulum.Start();
+            }
         }
 
         private bool graphFin = true;
@@ -187,7 +192,7 @@ public static class GraphData
         private double startT = 0;
         private double deltaT = 0.05;
         private double endT = 0.1;
-        private double[] y0 = {0, 0, 0, 0 };
+        private double[] y0 = { 0, 0, 0, 0 };
 
         private RotateTransform3D rotate;
         private ScaleTransform3D scaleTransform;
@@ -220,7 +225,7 @@ public static class GraphData
 
                 // преобразование маятника
                 rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1),
-                    0.8*solve[0, 3] * 180 / Math.PI));
+                    0.8 * solve[0, 3] * 180 / Math.PI));
                 pendulumTransform.Children.Clear(); // очистим предыдущие изменения
                 pendulumTransform.Children.Add(rotate);
                 pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
@@ -265,7 +270,7 @@ public static class GraphData
             y0[0] = e.NewValue / 100;
             pendulumTransform.Children.Clear();
             pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
-            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + y0[0]*30));
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + y0[0] * 30));
 
             //пружину
             cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
@@ -278,7 +283,7 @@ public static class GraphData
         // Начальный угол
         private void Slider_ValueChanged_2(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            y0[2] = e.NewValue / 180 * Math.PI ;
+            y0[2] = e.NewValue / 180 * Math.PI;
         }
 
         // Масса гайки
@@ -306,33 +311,36 @@ public static class GraphData
 
         private void Stop_OnClick(object sender, RoutedEventArgs e)
         {
-            if (paused)
-                paused = false;
-            else
+
+
+            timerPendulum.Stop();
+
+            y0 = new double[] { 0, 0, 0, 0 };
+            startT = 0;
+            endT = 0.1;
+            GraphData.z_t.Points.Clear();
+            GraphData.theta_t.Points.Clear();
+
+            pendulumTransform.Children.Clear();
+            pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3));
+
+            cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            scale = cutLength / spring.Bounds.SizeZ;
+            scaleTransform =
+                new ScaleTransform3D(new Vector3D(1, 1, scale * 1.03), new Point3D(0, 5, stick.Bounds.Z));
+            springTransform.Children.Add(scaleTransform);
+
+            if (graph != null && graph.IsEnabled)
             {
-                timerPendulum.Stop();
+                timerGraph.Stop();
+                graph.Close();
+                z_t.MyModel.InvalidatePlot(true);
+                z_t.MyModel.Series.Clear();
 
-                y0 = new double[] {0, 0, 0, 0};
-                startT = 0;
-                endT = 0.1;
-                GraphData.z_t.Points.Clear();
-                GraphData.theta_t.Points.Clear();
-
-                pendulumTransform.Children.Clear();
-                pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
-                pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3));
-
-                if (graph != null && graph.IsEnabled)
-                {
-                    timerGraph.Stop();
-                    graph.Close();
-                    z_t.MyModel.InvalidatePlot(true);
-                    z_t.MyModel.Series.Clear();
-
-                }
             }
+
         }
     }
 
 }
-    

@@ -10,7 +10,7 @@ namespace ODE
     {
         private static OdeExplicitRungeKutta45 odeRK = new OdeExplicitRungeKutta45();
         // TODO: m, k...
-        public static double[,] GetOscillations(double start_t, double delta_t, double end_t, double[] y0)
+        public static double[,] GetOscillations(double start_t, double delta_t, double end_t, double[] y0/*, double mass, double k, */)
         {
             OdeFunction fun = new OdeFunction(ODEs);
             //x(i) = z, zdot, theta, thetadot

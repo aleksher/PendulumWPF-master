@@ -43,7 +43,7 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0">
+                        <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged" Maximum="2" Minimum="0.1" LargeChange="0.1">
                             
                         </Slider>
                         <TextBox Grid.Column="1">
@@ -56,7 +56,7 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0">
+                            <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged_1" Maximum="20" Minimum="0" LargeChange="0.1">
 
                         </Slider>
                         <TextBox Grid.Column="1">

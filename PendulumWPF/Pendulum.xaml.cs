@@ -23,7 +23,7 @@ namespace PendulumWPF
         public z_t()
         {
             MyModel = new PlotModel { Title = "" };
-            GraphData.z_t.Title = "z(t)";
+            GraphData.z_t.Title = "z";
             var z_axis = new LinearAxis();
             z_axis.Title = "z /m";
             z_axis.Key = "z";
@@ -32,15 +32,22 @@ namespace PendulumWPF
             MyModel.Axes.Add(z_axis);
             MyModel.Series.Add(GraphData.z_t);
 
-            GraphData.theta_t.Title = "theta(t)";
+            GraphData.theta_t.Title = "theta";
             var theta_axis = new LinearAxis();
-            theta_axis.Title = "theta/ rad";
+            theta_axis.Title = "theta /rad";
             theta_axis.Key = "theta";
             theta_axis.Position = AxisPosition.Right;
             GraphData.theta_t.YAxisKey = "theta";
             GraphData.theta_t.Color = OxyColor.FromRgb(255,0,0);
+
             MyModel.Axes.Add(theta_axis);
             MyModel.Series.Add(GraphData.theta_t);
+
+            var x_axis = new LinearAxis();
+            x_axis.Position = AxisPosition.Bottom;
+            x_axis.Title = "t /sec";
+
+            MyModel.Axes.Add(x_axis);
         }
 
         public static PlotModel MyModel { get; private set; }
@@ -203,15 +210,13 @@ public static class GraphData
                 startT += deltaT;
                 endT += deltaT;
 
-
-
                 // преобразование маятника
                 rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1),
                     0.8*solve[0, 3] * 180 / Math.PI));
                 pendulumTransform.Children.Clear(); // очистим предыдущие изменения
                 pendulumTransform.Children.Add(rotate);
                 pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
-                pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + 30 * solve[0, 1]));
+                pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + 30*startOffset + 30 * solve[0, 1]));
                 pendulum.Transform = pendulumTransform;
 
                 // преобразование пружины
@@ -236,9 +241,21 @@ public static class GraphData
                     GraphData.theta_t.Points.RemoveAt(0);
                     GraphData.theta_z.Points.RemoveAt(0);
                 }
-
                 pendFin = true;
             }
+        }
+
+        // Масса
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            
+        }
+
+        // Наальное смещение
+        private double startOffset = 0;
+        private void Slider_ValueChanged_1(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            startOffset = e.NewValue / 100;
         }
     }
 }

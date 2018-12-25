@@ -87,8 +87,8 @@ public static class GraphData
             system = new Model3DGroup();
 
             ModelImporter pendulumImporter = new ModelImporter();
-            pendulumImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkMagenta));
-            pendulum = pendulumImporter.Load("pendulum90ver5 (2).obj");
+            pendulumImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.DarkGoldenrod));
+            pendulum = pendulumImporter.Load("pendulum.obj");
             pendulumTransform = new Transform3DGroup();
             pendulumTransform.Children.Add(new ScaleTransform3D(1.5,1.5,1.5));
             pendulumTransform.Children.Add(new TranslateTransform3D(0, 5 ,-3));
@@ -96,7 +96,7 @@ public static class GraphData
             system.Children.Add(pendulum);
 
             ModelImporter baseImporter = new ModelImporter();
-            baseImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
+            baseImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.SteelBlue));
             @base = baseImporter.Load("tripod1d.obj");
             Transform3DGroup baseTransform = new Transform3DGroup();
             baseTransform.Children.Add(new ScaleTransform3D(0.25, 0.4, 0.25));
@@ -105,7 +105,7 @@ public static class GraphData
             system.Children.Add(@base);
 
             ModelImporter stick90Importer = new ModelImporter();
-            stick90Importer.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
+            stick90Importer.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.SteelBlue));
             stick90 = stick90Importer.Load("tripod2d.obj");
             Transform3DGroup stick90Transform = new Transform3DGroup();
             stick90Transform.Children.Add(new ScaleTransform3D(0.25, 0.25, 0.25));
@@ -114,7 +114,7 @@ public static class GraphData
             system.Children.Add(stick90);
 
             ModelImporter stickImporter = new ModelImporter();
-            stickImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.CornflowerBlue));
+            stickImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.SteelBlue));
             stick = stickImporter.Load("tripod3d.obj");
             Transform3DGroup stickTransform = new Transform3DGroup();
             stickTransform.Children.Add(new ScaleTransform3D(0.25, 0.4, 0.25));
@@ -132,6 +132,7 @@ public static class GraphData
             system.Children.Add(table);
 
             ModelImporter springImporter = new ModelImporter();
+            springImporter.DefaultMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Silver));
             spring = springImporter.Load("spring.obj");
 
             springTransform = new Transform3DGroup();
@@ -148,25 +149,28 @@ public static class GraphData
             scene.Content = system;
         }
 
+        private DispatcherTimer timerGraph;
+        private OXYPlotTest graph;
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             // открывается из "Сохранить скриншот"
-            var graph = new OXYPlotTest();
+            graph = new OXYPlotTest();
             graph.Show();
 
-            DispatcherTimer timerGraph = new DispatcherTimer();
+            timerGraph = new DispatcherTimer();
             timerGraph.Tick += timerGraphTick;
             timerGraph.Interval = new TimeSpan(0, 0, 0, 0, 30);
             timerGraph.Start();
 
         }
 
+        private DispatcherTimer timerPendulum;
         private void Start_OnClick(object sender, RoutedEventArgs e)
         {
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Tick += timerTick;
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 30);
-            timer.Start();
+            timerPendulum = new DispatcherTimer();
+            timerPendulum.Tick += timerTick;
+            timerPendulum.Interval = new TimeSpan(0, 0, 0, 0, 30);
+            timerPendulum.Start();
         }
 
         private bool graphFin = true;
@@ -201,9 +205,9 @@ public static class GraphData
 
         private void timerTick(object sender, EventArgs e)
         {
-            if (pendFin)
+            if (!paused)
             {
-                pendFin = false;
+
                 //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
                 solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0, mass, k, nutMass);
                 y0[0] = solve[1, 1];
@@ -245,7 +249,7 @@ public static class GraphData
                     GraphData.theta_t.Points.RemoveAt(0);
                     GraphData.theta_z.Points.RemoveAt(0);
                 }
-                pendFin = true;
+
             }
         }
 
@@ -292,6 +296,41 @@ public static class GraphData
         {
             Reference p = new Reference();
             p.Show();
+        }
+
+        private bool paused = false;
+        private void Pause_OnClick(object sender, RoutedEventArgs e)
+        {
+            paused = true;
+        }
+
+        private void Stop_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (paused)
+                paused = false;
+            else
+            {
+                timerPendulum.Stop();
+
+                y0 = new double[] {0, 0, 0, 0};
+                startT = 0;
+                endT = 0.1;
+                GraphData.z_t.Points.Clear();
+                GraphData.theta_t.Points.Clear();
+
+                pendulumTransform.Children.Clear();
+                pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+                pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3));
+
+                if (graph != null && graph.IsEnabled)
+                {
+                    timerGraph.Stop();
+                    graph.Close();
+                    z_t.MyModel.InvalidatePlot(true);
+                    z_t.MyModel.Series.Clear();
+
+                }
+            }
         }
     }
 

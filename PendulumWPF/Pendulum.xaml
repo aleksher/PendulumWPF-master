@@ -43,7 +43,7 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged" Maximum="2" Minimum="0.1" LargeChange="0.1" Name="Massa_gruza">
+                        <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged" Maximum="1" Minimum="0.1" LargeChange="0.1" Name="Massa_gruza">
                             
                         </Slider>
                         <TextBox Grid.Column="1" Text="{Binding ElementName=Massa_gruza, Path=Value}">
@@ -56,7 +56,7 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                            <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged_1" Maximum="10" Minimum="0" LargeChange="0.1" Name="begin_z">
+                            <Slider Grid.Column="0" ValueChanged="Slider_ValueChanged_1" Maximum="10" Minimum="-10" LargeChange="0.1" Name="begin_z">
 
                         </Slider>
                         <TextBox Grid.Column="1" Text="{Binding ElementName=begin_z, Path=Value}">
@@ -69,7 +69,7 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0" Maximum="360" Minimum="0" LargeChange="1"  ValueChanged="Slider_ValueChanged_2" Name="begin_fi" />
+                        <Slider Grid.Column="0" Maximum="180" Minimum="0" LargeChange="1"  ValueChanged="Slider_ValueChanged_2" Name="begin_fi" />
                         <TextBox Grid.Column="1" Text="{Binding ElementName=begin_fi, Path=Value}">
 
                         </TextBox>
@@ -80,7 +80,7 @@
                             <ColumnDefinition Width="10*"/>
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <Slider Grid.Column="0" Maximum="5" Minimum="2" LargeChange="0.1" ValueChanged="Slider_ValueChanged_4" Name="stifnes_cof"/>
+                        <Slider Grid.Column="0" Maximum="20" Minimum="2" LargeChange="0.1" ValueChanged="Slider_ValueChanged_4" Name="stifnes_cof"/>
                         <TextBox Grid.Column="1" Text="{Binding ElementName=stifnes_cof, Path=Value}">
 
                         </TextBox>
@@ -109,8 +109,8 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
                         <Button Content="Start" Margin="0,0,5,0" Grid.Column="0" Click="Start_OnClick"/>
-                        <Button Content="Pause" Margin="0,0,5,0" Grid.Column="1"/>
-                        <Button Content="Stop" Margin="0,0,5,0" Grid.Column="2"/>
+                        <Button Content="Pause" Margin="0,0,5,0" Grid.Column="1" Click="Pause_OnClick"/>
+                        <Button Content="Stop" Margin="0,0,5,0" Grid.Column="2" Click ="Stop_OnClick"/>
                     </Grid>
                 </StackPanel>
 

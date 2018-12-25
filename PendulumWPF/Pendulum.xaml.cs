@@ -183,7 +183,7 @@ public static class GraphData
         private double startT = 0;
         private double deltaT = 0.05;
         private double endT = 0.1;
-        private double[] y0 = {0, 0, Math.PI * 2, 0 };
+        private double[] y0 = {0, 0, 0, 0 };
 
         private RotateTransform3D rotate;
         private ScaleTransform3D scaleTransform;
@@ -195,13 +195,16 @@ public static class GraphData
         private int count = 0;
         private bool pendFin = true;
 
+        private double mass = 0.1;
+        private double k = 1;
+
         private void timerTick(object sender, EventArgs e)
         {
             if (pendFin)
             {
                 pendFin = false;
                 //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
-                solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0);
+                solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0, mass, k);
                 y0[0] = solve[1, 1];
                 y0[1] = solve[1, 2];
                 y0[2] = solve[1, 3];
@@ -216,7 +219,7 @@ public static class GraphData
                 pendulumTransform.Children.Clear(); // очистим предыдущие изменения
                 pendulumTransform.Children.Add(rotate);
                 pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
-                pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + 30*startOffset + 30 * solve[0, 1]));
+                pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + 30 * solve[0, 1]));
                 pendulum.Transform = pendulumTransform;
 
                 // преобразование пружины
@@ -248,15 +251,37 @@ public static class GraphData
         // Масса
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            
+            mass = e.NewValue;
         }
 
         // Наальное смещение
-        private double startOffset = 0;
         private void Slider_ValueChanged_1(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            startOffset = e.NewValue / 100;
+            y0[0] = e.NewValue / 100;
+            pendulumTransform.Children.Clear();
+            pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
+            pendulumTransform.Children.Add(new TranslateTransform3D(0, 5, -3 + y0[0]*30));
+
+            //пружину
+            cutLength = stick.Bounds.Z - (pendulum.Bounds.Z + pendulum.Bounds.SizeZ);
+            scale = cutLength / spring.Bounds.SizeZ;
+            scaleTransform =
+                new ScaleTransform3D(new Vector3D(1, 1, scale * 1.03), new Point3D(0, 5, stick.Bounds.Z));
+            springTransform.Children.Add(scaleTransform);
+        }
+
+        // Начальный угол
+        private void Slider_ValueChanged_2(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            y0[2] = e.NewValue / 180 * Math.PI ;
+        }
+
+        // Масса гайки
+        private void Slider_ValueChanged_3(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
         }
     }
+
 }
     

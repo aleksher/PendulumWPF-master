@@ -150,19 +150,12 @@ namespace PendulumWPF
             scene.Content = system;
         }
 
-        private DispatcherTimer timerGraph;
         private OXYPlotTest graph;
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             // открывается из "Сохранить скриншот"
             graph = new OXYPlotTest();
             graph.Show();
-
-            timerGraph = new DispatcherTimer();
-            timerGraph.Tick += timerGraphTick;
-            timerGraph.Interval = new TimeSpan(0, 0, 0, 0, 30);
-            timerGraph.Start();
-
         }
 
         private DispatcherTimer timerPendulum;
@@ -188,7 +181,7 @@ namespace PendulumWPF
             if (graphFin)
             {
                 graphFin = false;
-                z_t.MyModel.InvalidatePlot(true);
+                
                 graphFin = true;
             }
         }
@@ -224,11 +217,6 @@ namespace PendulumWPF
                 y0[2] = solve[1, 3];
                 y0[3] = solve[1, 4];
 
-                startT += deltaT;
-                TimeSpan t = TimeSpan.FromSeconds(startT);
-                var timer_lbl = (TextBlock)this.FindName("timer_lbl");
-                timer_lbl.Text = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D2}ms", t.Hours, t.Minutes, t.Seconds, t.Milliseconds);
-                endT += deltaT;
 
                 // преобразование маятника
                 rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1),
@@ -253,6 +241,7 @@ namespace PendulumWPF
                     GraphData.theta_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 3]));
                     GraphData.theta_z.Points.Add(new DataPoint(solve[0, 1], solve[0, 3]));
                     count = 0;
+                    z_t.MyModel.InvalidatePlot(true);
                 }
 
                 if (GraphData.theta_z.Points.Count > 700)
@@ -261,6 +250,15 @@ namespace PendulumWPF
                     GraphData.theta_t.Points.RemoveAt(0);
                     GraphData.theta_z.Points.RemoveAt(0);
                 }
+
+                
+
+                startT += deltaT;
+                TimeSpan t = TimeSpan.FromSeconds(startT);
+                var timer_lbl = (TextBlock)this.FindName("timer_lbl");
+                timer_lbl.Text = string.Format("{0:D2}h:{1:D2}m:{2:D2}s:{3:D2}ms", t.Hours, t.Minutes, t.Seconds, t.Milliseconds);
+                endT += deltaT;
+
 
             }
         }
@@ -355,7 +353,7 @@ namespace PendulumWPF
 
             if (graph != null && graph.IsEnabled)
             {
-                timerGraph.Stop();
+                //timerGraph.Stop();
                 graph.Close();
                 z_t.MyModel.InvalidatePlot(true);
                 z_t.MyModel.Series.Clear();

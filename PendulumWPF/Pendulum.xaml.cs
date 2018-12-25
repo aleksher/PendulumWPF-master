@@ -231,7 +231,7 @@ public static class GraphData
                 springTransform.Children.Add(scaleTransform);
 
                 // формирование списка данных для графиков
-                //if (count++ > 2)
+                if (count++ > 2)
                 {
                     GraphData.z_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 1]));
                     GraphData.theta_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 3]));
@@ -239,7 +239,7 @@ public static class GraphData
                     count = 0;
                 }
 
-                if (GraphData.theta_z.Points.Count > 1500)
+                if (GraphData.theta_z.Points.Count > 700)
                 {
                     GraphData.z_t.Points.RemoveAt(0);
                     GraphData.theta_t.Points.RemoveAt(0);
@@ -286,6 +286,12 @@ public static class GraphData
         private void Slider_ValueChanged_4(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             k = e.NewValue;
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            Reference p = new Reference();
+            p.Show();
         }
     }
 

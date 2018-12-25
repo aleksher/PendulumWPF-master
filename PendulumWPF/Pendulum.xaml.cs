@@ -12,6 +12,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using ODE;
 using OxyPlot;
+using OxyPlot.Axes;
 using OxyPlot.Series;
 
 
@@ -22,12 +23,24 @@ namespace PendulumWPF
         public z_t()
         {
             MyModel = new PlotModel { Title = "" };
-            GraphData.z_t.Title = "z(t) /m";
-            //GraphData.z_t.YAxisKey = "z/m";
+            GraphData.z_t.Title = "z(t)";
+            var z_axis = new LinearAxis();
+            z_axis.Title = "z /m";
+            z_axis.Key = "z";
+            GraphData.z_t.YAxisKey = "z";
+            GraphData.z_t.Color = OxyColor.FromRgb(0,0,255);
+            MyModel.Axes.Add(z_axis);
             MyModel.Series.Add(GraphData.z_t);
-            //GraphData.theta_t.Title = "theta(t) /rad";
-            //theta_t.YAxisKey = "theta/rad";
-            //MyModel.Series.Add(GraphData.theta_t);
+
+            GraphData.theta_t.Title = "theta(t)";
+            var theta_axis = new LinearAxis();
+            theta_axis.Title = "theta/ rad";
+            theta_axis.Key = "theta";
+            theta_axis.Position = AxisPosition.Right;
+            GraphData.theta_t.YAxisKey = "theta";
+            GraphData.theta_t.Color = OxyColor.FromRgb(255,0,0);
+            MyModel.Axes.Add(theta_axis);
+            MyModel.Series.Add(GraphData.theta_t);
         }
 
         public static PlotModel MyModel { get; private set; }
@@ -136,7 +149,7 @@ public static class GraphData
 
             DispatcherTimer timerGraph = new DispatcherTimer();
             timerGraph.Tick += timerGraphTick;
-            timerGraph.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            timerGraph.Interval = new TimeSpan(0, 0, 0, 0, 30);
             timerGraph.Start();
 
         }
@@ -145,7 +158,7 @@ public static class GraphData
         {
             DispatcherTimer timer = new DispatcherTimer();
             timer.Tick += timerTick;
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 30);
             timer.Start();
         }
 
@@ -161,8 +174,8 @@ public static class GraphData
         }
 
         private double startT = 0;
-        private double deltaT = 0.01;
-        private double endT = 0.02;
+        private double deltaT = 0.05;
+        private double endT = 0.1;
         private double[] y0 = {0, 0, Math.PI * 2, 0 };
 
         private RotateTransform3D rotate;
@@ -194,7 +207,7 @@ public static class GraphData
 
                 // преобразование маятника
                 rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 0, 1),
-                    solve[0, 3] * 180 / Math.PI));
+                    0.8*solve[0, 3] * 180 / Math.PI));
                 pendulumTransform.Children.Clear(); // очистим предыдущие изменения
                 pendulumTransform.Children.Add(rotate);
                 pendulumTransform.Children.Add(new ScaleTransform3D(1.5, 1.5, 1.5));
@@ -209,7 +222,7 @@ public static class GraphData
                 springTransform.Children.Add(scaleTransform);
 
                 // формирование списка данных для графиков
-                if (count++ > 10)
+                //if (count++ > 2)
                 {
                     GraphData.z_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 1]));
                     GraphData.theta_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 3]));
@@ -217,7 +230,7 @@ public static class GraphData
                     count = 0;
                 }
 
-                if (GraphData.theta_z.Points.Count > 200)
+                if (GraphData.theta_z.Points.Count > 1500)
                 {
                     GraphData.z_t.Points.RemoveAt(0);
                     GraphData.theta_t.Points.RemoveAt(0);

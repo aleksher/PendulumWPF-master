@@ -21,7 +21,8 @@ namespace ODE
 
         private static double[] dxdt = new double[4];
         private static double omega = 2.314;       // rad.s-1
-        private static double epsilon = 9.27e-3;   // N
+        //private static double epsilon = 9.27e-3;   // N
+        private static double epsilon = 2.8e-3;   // N
         private static double m = 0.4905;          // kg
         //private static double m = 49.05;          // kg
         private static double I = 1.39e-4;         // kg.m2

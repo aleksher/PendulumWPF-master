@@ -282,6 +282,11 @@ public static class GraphData
         {
             nutMass = e.NewValue;
         }
+
+        private void Slider_ValueChanged_4(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            k = e.NewValue;
+        }
     }
 
 }

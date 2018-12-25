@@ -12,20 +12,29 @@ namespace ODE
         // TODO: m, k...
         public static double[,] GetOscillations(double start_t, double delta_t, double end_t, double[] y0, double mass, double k, double nutMass)
         {
+            I = 0.00125 * mass + 9.33e-5 + 3.11e-4*nutMass + 0.0025*(nutMass + 1);
+            m = mass + 4 * nutMass + 0.4;
+            epsilon = 0.00325 * k;
+            omega = Math.Sqrt(k / m);
             OdeFunction fun = new OdeFunction(ODEs);
             //x(i) = z, zdot, theta, thetadot
+
             odeRK.InitializeODEs(fun, 4);
             double[,] sol = odeRK.Solve(y0, start_t, delta_t, end_t);
             return sol;
         }
 
         private static double[] dxdt = new double[4];
-        private static double omega = 2.314;       // rad.s-1
+        //private static double omega = 2.314;       // rad.s-1
         //private static double epsilon = 9.27e-3;   // N
-        private static double epsilon = 2.8e-3;   // N
-        private static double m = 0.4905;          // kg
-        //private static double m = 49.05;          // kg
-        private static double I = 1.39e-4;         // kg.m2
+        //private static double epsilon = 2.8e-3;   // N
+        //private static double m = 0.4905;          // kg
+        //private static double I = 1.39e-4;         // kg.m2
+        private static double I;
+        private static double m;
+        private static double epsilon;
+        private static double omega;
+
         private static double[] ODEs(double t, double[] x)
         {
             //x(i) = z, zdot, theta, thetadot

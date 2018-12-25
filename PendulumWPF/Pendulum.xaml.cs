@@ -197,6 +197,7 @@ public static class GraphData
 
         private double mass = 0.1;
         private double k = 1;
+        private double nutMass = 0.01;
 
         private void timerTick(object sender, EventArgs e)
         {
@@ -204,7 +205,7 @@ public static class GraphData
             {
                 pendFin = false;
                 //solve[i,0] - t, solve[i, 1] - z, solve[i, 2] - zdot, solve[i, 3] - theta, solve[i, 4] - thetadot 
-                solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0, mass, k);
+                solve = WilberforcePendulum.GetOscillations(startT, deltaT, endT, y0, mass, k, nutMass);
                 y0[0] = solve[1, 1];
                 y0[1] = solve[1, 2];
                 y0[2] = solve[1, 3];
@@ -279,7 +280,7 @@ public static class GraphData
         // Масса гайки
         private void Slider_ValueChanged_3(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
+            nutMass = e.NewValue;
         }
     }
 

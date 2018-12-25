@@ -21,8 +21,13 @@ namespace PendulumWPF
     {
         public z_t()
         {
-            MyModel = new PlotModel { Title = "z(t)" };
+            MyModel = new PlotModel { Title = "" };
+            GraphData.z_t.Title = "z(t) /m";
+            //GraphData.z_t.YAxisKey = "z/m";
             MyModel.Series.Add(GraphData.z_t);
+            //GraphData.theta_t.Title = "theta(t) /rad";
+            //theta_t.YAxisKey = "theta/rad";
+            //MyModel.Series.Add(GraphData.theta_t);
         }
 
         public static PlotModel MyModel { get; private set; }
@@ -212,7 +217,7 @@ public static class GraphData
                     count = 0;
                 }
 
-                if (GraphData.theta_z.Points.Count > 300)
+                if (GraphData.theta_z.Points.Count > 200)
                 {
                     GraphData.z_t.Points.RemoveAt(0);
                     GraphData.theta_t.Points.RemoveAt(0);

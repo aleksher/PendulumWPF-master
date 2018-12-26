@@ -154,8 +154,11 @@ namespace PendulumWPF
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             // открывается из "Сохранить скриншот"
-            graph = new OXYPlotTest();
-            graph.Show();
+            if (graph == null)
+            {
+                graph = new OXYPlotTest();
+                graph.Show();
+            }
         }
 
         private DispatcherTimer timerPendulum;
@@ -250,7 +253,8 @@ namespace PendulumWPF
                     count = 0;
                     
                 }
-                z_t.MyModel.InvalidatePlot(true);
+                if (graph != null)
+                    z_t.MyModel.InvalidatePlot(true);
 
                 if (GraphData.theta_z.Points.Count > 700)
                 {

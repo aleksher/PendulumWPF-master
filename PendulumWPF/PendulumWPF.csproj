@@ -130,5 +130,17 @@
   <ItemGroup>
     <Resource Include="nstu_logo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="wilberforce_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="wilberforce_pend.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="program_screenshot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="graph_screenshot.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

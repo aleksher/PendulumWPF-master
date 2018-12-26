@@ -171,8 +171,15 @@ namespace PendulumWPF
                 timerPendulum.Start();
             }
 
-            var a = (Button) sender;
+            var a = (Button)sender;
             a.IsEnabled = false;
+
+            var pause_btn = (Button) this.FindName("Pause_btn");
+            pause_btn.IsEnabled = true;
+
+            var stop_btn = (Button)this.FindName("Stop_btn");
+            stop_btn.IsEnabled = true;
+
         }
 
         private bool graphFin = true;
@@ -241,8 +248,9 @@ namespace PendulumWPF
                     GraphData.theta_t.Points.Add(new DataPoint(solve[0, 0], solve[0, 3]));
                     GraphData.theta_z.Points.Add(new DataPoint(solve[0, 1], solve[0, 3]));
                     count = 0;
-                    z_t.MyModel.InvalidatePlot(true);
+                    
                 }
+                z_t.MyModel.InvalidatePlot(true);
 
                 if (GraphData.theta_z.Points.Count > 700)
                 {
@@ -362,6 +370,13 @@ namespace PendulumWPF
 
             var start_btn = (Button) this.FindName("start_btn");
             start_btn.IsEnabled = true;
+
+            var pause_btn = (Button)this.FindName("Pause_btn");
+            pause_btn.IsEnabled = false;
+
+            var stop_btn = (Button)sender;
+            stop_btn.IsEnabled = false;
+
 
         }
     }
